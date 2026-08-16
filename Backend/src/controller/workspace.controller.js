@@ -89,3 +89,56 @@ export async function getWorkspaceByIdController(req, res){
 
     }
 }
+
+
+
+export async function memberInviteController(req, res){
+    try{
+   const workspaceId = req.params.workspaceId
+   const userId = req.user.id
+   const {email, role} = req.body
+    const member = await membershipModel.findOne({
+        user : userId,
+        workspace : workspaceId,
+        role : "admin"
+    })
+    if(!member){
+        return res.status(403).json({
+            message : "Forbidden Request"
+        })
+    }
+
+    const newUser = await userModel.findOne({email})
+    if(!newUser){
+        return res.status(404).json({
+            message : "User not Found"
+        })
+    }
+    const isAlreadyMember = await membershipModel.findOne({
+        user : newUser.id,
+        workspace : workspaceId
+    })
+    if(isAlreadyMember){
+        return res.status(409).json({
+            message : "Already a memeber"
+        })
+    }
+   const  memberAdded = await membershipModel.create({
+        user : newUser.id,
+        workspace : workspaceId,
+        role : role
+    })
+    res.status(201).json({
+        message : "user added successfully",
+        memberAdded
+        
+    })
+}
+catch(err){
+    console.error("MEMBER_INVITE", err.message)
+    res.status(500).json({
+        message :"Something went Wrong"
+    })
+
+}
+}
