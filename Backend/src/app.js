@@ -24,3 +24,11 @@ import express from 'express'
  app.use('/api/workspace', detectedActionRouter)
  app.use('/api/workspace', aiRouter)
  app.use('/api/workspace', healthRouter)
+ import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const dist = path.join(__dirname, '../../Frontend/dist')
+
+app.use(express.static(dist))
+app.get(/^(?!\/api).*/, (req, res) => res.sendFile(path.join(dist, 'index.html')))

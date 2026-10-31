@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: sync-spaceai
+    runtime: node
+    buildCommand: cd Frontend && npm install && npm run build && cd ../Backend && npm install
+    startCommand: cd Backend && node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: MISTRAL_API_KEY
+        sync: false
+      - key: PINECONE_API_KEY
+        sync: false
