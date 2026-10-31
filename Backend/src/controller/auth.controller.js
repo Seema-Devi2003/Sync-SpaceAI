@@ -37,7 +37,7 @@ res.cookie("accessToken", accessToken, {
 
      res.cookie("refreshToken", refreshToken,{
         httpOnly : true,
-        secure : process.env.NODE_ENV === 'development',
+        secure : process.env.NODE_ENV === 'production',
         sameSite : "strict",
         maxAge : 7* 24 * 60 * 60 * 1000
      })
@@ -99,7 +99,7 @@ res.cookie("accessToken", accessToken, {
 
      res.cookie("refreshToken", refreshToken,  {
         httpOnly : true,
-        secure : process.env.NODE_ENV === "Production",
+        secure : process.env.NODE_ENV === "production",
         sameSite : "strict",
         maxAge : 7 * 24 * 60 * 60 * 1000,
      })
@@ -156,7 +156,7 @@ res.cookie("accessToken", accessToken, {
       return res.status(401).json({ message: "Refresh token invalid or expired, please login again" })
     }
 
-    const user = await userModel.findById(decoded.id).select("+refershToken")
+    const user = await userModel.findById(decoded.id).select("+refreshToken")
    if (!user || user.refreshToken !== token) {
   return res.status(401).json({ message: "Refresh token invalid, please login again" })
 }

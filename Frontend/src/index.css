@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-ink-950: #0b1012;
+  --color-ink-900: #0f1417;
+  --color-ink-800: #161d21;
+  --color-ink-700: #1d262b;
+  --color-ink-600: #2a343a;
+  --color-ink-500: #3d4a51;
+  --color-ink-400: #647178;
+  --color-ink-300: #8c9aa1;
+  --color-ink-200: #b7c2c6;
+  --color-ink-100: #dfe5e7;
+  --color-ink-50: #f2f4f4;
+
+  --color-signal-teal: #4fbda8;
+  --color-signal-teal-dim: #2d6e63;
+  --color-signal-amber: #e8a33d;
+  --color-signal-amber-dim: #7a5722;
+  --color-signal-coral: #e2694b;
+  --color-signal-coral-dim: #7a3527;
+  --color-signal-violet: #7c93f0;
+  --color-signal-violet-dim: #3c4780;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-ink-600);
+  }
+  html {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-ink-900 text-ink-100 antialiased;
+    font-family: var(--font-sans);
+  }
+  ::selection {
+    background: var(--color-signal-teal);
+    color: var(--color-ink-950);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-signal-teal);
+    outline-offset: 2px;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-ink-600);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-ink-500);
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+  .pulse-dot::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.55;
+    animation: pulse-ring 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  @keyframes pulse-ring {
+    0% {
+      transform: scale(1);
+      opacity: 0.55;
+    }
+    75%, 100% {
+      transform: scale(2.4);
+      opacity: 0;
+    }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.35s ease-out;
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

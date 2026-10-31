@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Socket.io Chat Test</h1>
+    <input id="workspaceInput" placeholder="Workspace ID" value="6a7ec2e5d462c754bf78edab">
+    <button onclick="joinRoom()">Join Workspace</button>
+    <br><br>
+    <input id="messageInput" placeholder="Type a message">
+    <button onclick="sendMsg()">Send</button>
+    <div id="messages"></div>
+
+    <script>
+        const socket = io("http://localhost:3000")
+
+        socket.on("connect", () => {
+            console.log("Connected! Socket id:", socket.id)
+        })
+
+        function joinRoom() {
+            const workspaceId = document.getElementById("workspaceInput").value
+            socket.emit("joinWorkspace", workspaceId)
+        }
+function sendMsg() {
+    const workspaceId = document.getElementById("workspaceInput").value
+    const message = document.getElementById("messageInput").value
+    socket.emit("sendMessage", { 
+        workspaceId, 
+        message, 
+        senderId: "6a7d57107c85e082114bb685",
+        senderName: "Seema" 
+    })
+}
+
+      socket.on("newMessage", (data) => {
+    const div = document.getElementById("messages")
+    div.innerHTML += `<p><b>${data.sender.username}:</b> ${data.message}</p>`
+})
+    </script>
+</body>
+</html>

@@ -92,6 +92,35 @@ export async function getWorkspaceByIdController(req, res){
 
 
 
+export async function getWorkspaceMembersController(req, res){
+    try{
+        const workspaceId = req.params.workspaceId
+        const userId = req.user.id
+        const member = await membershipModel.findOne({
+            user : userId,
+            workspace : workspaceId
+        })
+        if(!member){
+            return res.status(403).json({
+                message : "Forbidden Request"
+            })
+        }
+        const members = await membershipModel
+            .find({ workspace : workspaceId })
+            .populate("user", "username email")
+            .sort({ createdAt : 1 })
+        res.status(200).json({
+            message : "Members fetched successfully",
+            members
+        })
+    }catch(err){
+        console.error("GET_WORKSPACE_MEMBERS", err.message)
+        res.status(500).json({
+            message : "Something went wrong"
+        })
+    }
+}
+
 export async function memberInviteController(req, res){
     try{
    const workspaceId = req.params.workspaceId
@@ -142,3 +171,108 @@ catch(err){
 
 }
 }
+export async function removeMemberController(req, res){
+    try{
+        const member = req.params.memberId
+        const workspace = req.params.workspaceId
+        const user = req.user.id
+        
+         const memberFind = await membershipModel.findOne({
+        user : user,
+        workspace : workspace,
+        role : "admin"
+    })
+    if(!memberFind){
+        return res.status(403).json({
+            message : "Forbidden Request"
+        })
+    }
+  const memberDelete =  await membershipModel.findOneAndDelete({
+        user : member,
+        workspace : workspace
+    })
+if(!memberDelete){
+    return res.status(404).json({
+        message : "member not Found"
+    })
+}
+res.status(200).json({
+    message : "Member Deleted Successfully",
+    memberDelete
+
+})
+    }
+    catch(err){
+        console.error("REMOVE_MEMBER", err.message)
+        res.status(500).json({
+            message : "Something went Wrong"
+        })
+    }
+}
+export async function changeRoleController(req, res){
+    try{
+        const {role} = req.body
+        const workspace = req.params.workspaceId
+        const member = req.params.memberId
+        const user = req.user.id
+          const memberFind = await membershipModel.findOne({
+        user : user,
+        workspace : workspace,
+        role : "admin"
+    })
+    if(!memberFind){
+        return res.status(403).json({
+            message : "Forbidden Request"
+        })
+    }
+    const memberUpdate =  await membershipModel.findOneAndUpdate({
+        user : member,
+        workspace : workspace,
+    },
+        {role},
+        {new : true})
+        if(!memberUpdate){
+    return res.status(404).json({
+        message : "member not Found"
+    })
+}
+res.status(200).json({
+    message : "Member Updated Successfully",
+    memberUpdate
+
+})
+    }
+    catch(err){
+        console.error("UPDATE_MEMBER", err.message)
+        res.status(500).json({
+            message : "Something went Wrong"
+        })
+    }
+}
+export async function leaveWorkspaceController(req, res){
+    try{
+    const workspace = req.params.workspaceId
+    const user = req.user.id
+    const memberLeave = await membershipModel.findOneAndDelete({
+        user : user,
+        workspace : workspace
+    })
+    if(!memberLeave){
+      return res.status(400).json({
+            message : "member not Found"
+        })
+    }
+    res.status(200).json({
+        message :"Member left workspace Successfully",
+        memberLeave
+    })
+
+}
+catch(err){
+    console.error("MEMBER_LEAVE_ERROR", err.message)
+    res.status(500).json({
+        message : "Something went wrong"
+    })
+}
+}
+   
